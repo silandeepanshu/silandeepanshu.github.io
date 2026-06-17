@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>DS GAMER</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--red:#e0001b;--red2:#ff1a35;--glow:rgba(224,0,27,.4);--bg:#060608;--bg2:#0d0d10;--glass:rgba(255,255,255,.04);--border:rgba(224,0,27,.22);--bhi:rgba(224,0,27,.6);--txt:#e8e8f0;--dim:#7a7a90;--r:9px}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--txt);font-family:'Rajdhani',sans-serif;overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+.wm{position:fixed;font-family:'Orbitron',monospace;font-size:clamp(50px,11vw,130px);font-weight:900;color:rgba(224,0,27,.04);white-space:nowrap;pointer-events:none;z-index:1;user-select:none;top:50%;transform:translateY(-50%);animation:wmove 20s linear infinite}
+@keyframes wmove{0%{left:-40%}100%{left:110%}}
+.mglow{position:fixed;width:340px;height:340px;border-radius:50%;background:radial-gradient(circle,rgba(224,0,27,.12) 0%,transparent 70%);pointer-events:none;z-index:2;transform:translate(-50%,-50%);transition:opacity .3s}
+nav{position:fixed;top:0;left:0;right:0;z-index:900;display:flex;align-items:center;justify-content:space-between;padding:16px 5vw;background:rgba(6,6,8,.75);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:.3s}
+nav.sc{padding:10px 5vw;background:rgba(6,6,8,.95);border-bottom-color:var(--bhi)}
+.nlogo{font-family:'Orbitron',monospace;font-size:1.3rem;font-weight:900;letter-spacing:.08em}
+.nlogo span{color:var(--red)}
+.nlinks{display:flex;gap:30px}
+.nlinks a{font-size:.82rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);position:relative;transition:.3s}
+.nlinks a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--red);box-shadow:0 0 8px var(--glow);transition:.3s}
+.nlinks a:hover{color:#fff}.nlinks a:hover::after{width:100%}
+.nbtn{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px}
+.nbtn span{display:block;width:24px;height:2px;background:var(--red);border-radius:2px;transition:.3s}
+section{position:relative;z-index:10}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 5vw 60px;overflow:hidden}
+.smoke{position:absolute;border-radius:50%;filter:blur(70px);pointer-events:none;animation:sdrift linear infinite}
+.s1{width:550px;height:260px;background:radial-gradient(ellipse,rgba(224,0,27,.16) 0%,transparent 70%);bottom:10%;left:-8%;animation-duration:18s}
+.s2{width:380px;height:180px;background:radial-gradient(ellipse,rgba(224,0,27,.11) 0%,transparent 70%);top:18%;right:-5%;animation-duration:24s;animation-delay:-9s}
+.s3{width:460px;height:220px;background:radial-gradient(ellipse,rgba(160,0,20,.09) 0%,transparent 70%);top:52%;left:28%;animation-duration:30s;animation-delay:-14s}
+@keyframes sdrift{0%{transform:translateX(0) translateY(0) scale(1);opacity:.7}50%{transform:translateX(50px) translateY(-25px) scale(1.12);opacity:1}100%{transform:translateX(0) translateY(0) scale(1);opacity:.7}}
+.hbadge{display:inline-block;font-family:'Orbitron',monospace;font-size:.65rem;letter-spacing:.28em;text-transform:uppercase;color:var(--red2);border:1px solid var(--bhi);padding:5px 16px;border-radius:100px;margin-bottom:24px;background:rgba(224,0,27,.1);box-shadow:0 0 14px var(--glow);animation:fiDown .8s ease both}
+.hlogo{font-family:'Orbitron',monospace;font-weight:900;font-size:clamp(3rem,11vw,8rem);line-height:1;letter-spacing:.04em;margin-bottom:16px;animation:fiUp .9s ease .2s both;transition:transform .3s}
+.lds{color:#fff;text-shadow:0 0 18px rgba(255,255,255,.25)}
+.lgm{color:var(--red);text-shadow:0 0 18px var(--glow),0 0 50px rgba(224,0,27,.25)}
+.htyped{font-family:'Orbitron',monospace;font-size:clamp(.9rem,2.8vw,1.4rem);font-weight:700;letter-spacing:.18em;color:var(--red2);margin-bottom:14px;min-height:1.8em;animation:fiUp .9s ease .4s both}
+.cur{animation:blink .8s step-end infinite;color:var(--red2)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.hsub{font-size:clamp(.85rem,2.2vw,1.1rem);color:var(--dim);letter-spacing:.08em;margin-bottom:36px;animation:fiUp .9s ease .6s both}
+.hbtns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:44px;animation:fiUp .9s ease .8s both}
+.hstats{display:flex;align-items:center;justify-content:center;gap:28px;animation:fiUp .9s ease 1s both}
+.stn{font-family:'Orbitron',monospace;font-size:1.5rem;font-weight:900;color:var(--red2);text-shadow:0 0 14px var(--glow)}
+.stl{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-top:2px}
+.sdiv{width:1px;height:32px;background:var(--bhi)}
+.scroll-ind{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:7px;color:var(--dim);font-size:.6rem;letter-spacing:.28em;text-transform:uppercase;animation:fadeIn 1s ease 1.5s both}
+.sline{width:1px;height:36px;background:linear-gradient(to bottom,var(--red),transparent);animation:spulse 2s ease-in-out infinite}
+@keyframes spulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.4;transform:scaleY(.5)}}
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:'Rajdhani',sans-serif;font-size:.88rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:12px 28px;border-radius:var(--r);cursor:pointer;border:none;transition:.3s;position:relative;overflow:hidden}
+.bp{background:var(--red);color:#fff;box-shadow:0 0 22px var(--glow),0 4px 18px rgba(0,0,0,.4)}
+.bp:hover{background:var(--red2);box-shadow:0 0 36px var(--glow);transform:translateY(-2px)}
+.bs{background:transparent;color:#fff;border:1px solid var(--bhi);box-shadow:0 0 14px rgba(224,0,27,.1)}
+.bs:hover{border-color:var(--red2);box-shadow:0 0 26px var(--glow);transform:translateY(-2px)}
+.bo{background:transparent;color:var(--red2);border:1px solid var(--red2);padding:9px 20px;font-size:.78rem}
+.bo:hover{background:rgba(224,0,27,.1)}
+.gc{background:var(--glass);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:12px;transition:.3s}
+.gc:hover{border-color:var(--bhi);box-shadow:0 0 28px rgba(224,0,27,.1),0 8px 36px rgba(0,0,0,.45);transform:translateY(-4px)}
+.sec{padding:90px 5vw;z-index:10;position:relative}
+.secl{font-family:'Orbitron',monospace;font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:var(--red2);margin-bottom:12px}
+.sect{font-family:'Orbitron',monospace;font-size:clamp(1.7rem,4.5vw,2.8rem);font-weight:900;letter-spacing:.04em;margin-bottom:14px;line-height:1.15}
+.acc{color:var(--red);text-shadow:0 0 18px var(--glow)}
+.secsb{color:var(--dim);font-size:1rem;max-width:500px;margin-bottom:48px}
+.abg{display:grid;grid-template-columns:1fr 1.3fr 1fr;gap:22px;align-items:center;margin-top:44px}
+.ac{padding:32px 26px;text-align:center}
+.aic{font-size:2rem;color:var(--red);margin-bottom:14px;text-shadow:0 0 18px var(--glow)}
+.ac h3{font-family:'Orbitron',monospace;font-size:.9rem;font-weight:700;letter-spacing:.1em;color:#fff;margin-bottom:9px;text-transform:uppercase}
+.ac p{color:var(--dim);font-size:.92rem;line-height:1.6}
+.amain{padding:40px 30px;border-color:var(--bhi);box-shadow:0 0 36px rgba(224,0,27,.08)}
+.avt{position:relative;width:100px;height:100px;margin:0 auto 18px}
+.aring{position:absolute;inset:0;border:2px solid var(--red);border-radius:50%;animation:aspin 6s linear infinite;box-shadow:0 0 18px var(--glow)}
+.aring::before{content:'';position:absolute;top:-3px;left:38%;width:9px;height:9px;background:var(--red);border-radius:50%;box-shadow:0 0 10px var(--red)}
+@keyframes aspin{to{transform:rotate(360deg)}}
+.ainr{position:absolute;inset:11px;background:radial-gradient(circle at 40% 35%,#2a0005,#0d0005);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',monospace;font-size:1.6rem;font-weight:900;color:var(--red2);text-shadow:0 0 14px var(--glow)}
+.ahd{color:var(--red2)!important;font-size:.78rem!important;letter-spacing:.16em;margin-bottom:10px!important}
+.shg{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.shc{overflow:hidden;position:relative}
+.shbdg{position:absolute;top:12px;left:12px;z-index:5;background:var(--red);color:#fff;font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;letter-spacing:.18em;padding:3px 9px;border-radius:4px;box-shadow:0 0 10px var(--glow)}
+.shemb{position:relative;width:100%;height:380px;overflow:hidden;background:#111}
+.shemb iframe{width:100%;height:100%;border:0;display:block}
+.shi{padding:14px 16px}
+.stag{display:inline-flex;align-items:center;gap:5px;font-size:.72rem;color:var(--red2);letter-spacing:.1em;margin-bottom:5px}
+.shi h4{font-family:'Orbitron',monospace;font-size:.84rem;font-weight:700;letter-spacing:.08em;color:#fff}
+.glg{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:200px 200px;gap:14px}
+.gli{position:relative;overflow:hidden;cursor:pointer;border-radius:10px}
+.glw{grid-column:span 2}
+.glimg{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .5s}
+.gli:hover .glimg{transform:scale(1.08)}
+.gi1{background:linear-gradient(135deg,#1a0003,#5a000d 35%,#200005 65%,#0a0002)}
+.gi2{background:linear-gradient(135deg,#000a1a,#00285a 35%,#000d1e 65%,#000509)}
+.gi3{background:linear-gradient(135deg,#1a0003,#400009 28%,#0d0002 55%,#300007 78%,#0a0002)}
+.gi4{background:linear-gradient(135deg,#0a000a,#3a0030 35%,#130015 65%,#050003)}
+.gi5{background:linear-gradient(135deg,#0a0500,#3d1800 35%,#160800 65%,#030200)}
+.gli::before{content:attr(data-tag);position:absolute;top:12px;right:12px;z-index:5;font-family:'Orbitron',monospace;font-size:.58rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--red2);border:1px solid var(--bhi);padding:3px 9px;border-radius:4px;background:rgba(0,0,0,.65)}
+.glov{position:absolute;inset:0;background:linear-gradient(to top,rgba(224,0,27,.65) 0%,transparent 60%);display:flex;align-items:flex-end;padding:18px;opacity:0;transition:opacity .3s;z-index:4}
+.gli:hover .glov{opacity:1}
+.glov span{font-family:'Orbitron',monospace;font-size:1rem;font-weight:900;letter-spacing:.15em;color:#fff}
+.sog{display:grid;grid-template-columns:repeat(2,1fr);gap:22px}
+.soc{display:flex;align-items:center;gap:20px;padding:24px 28px;position:relative;overflow:hidden;cursor:pointer;transition:.3s}
+.soc:hover{transform:translateY(-5px)}
+.siw{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;transition:.3s}
+.soc:hover .siw{transform:scale(1.1) rotate(-5deg)}
+.yt .siw{background:rgba(255,0,0,.14);color:#ff4444;border:1px solid rgba(255,0,0,.28)}
+.ig .siw{background:rgba(193,53,132,.14);color:#e1306c;border:1px solid rgba(193,53,132,.28)}
+.pt .siw{background:rgba(189,8,28,.14);color:#bd081c;border:1px solid rgba(189,8,28,.28)}
+.em .siw{background:rgba(224,0,27,.14);color:var(--red2);border:1px solid var(--border)}
+.sinf{display:flex;flex-direction:column;gap:2px}
+.spl{font-family:'Orbitron',monospace;font-size:.65rem;font-weight:700;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.shn{font-size:1rem;font-weight:600;color:#fff}
+.scta{font-size:.76rem;color:var(--red2);font-weight:500;margin-top:3px;opacity:0;transform:translateX(-8px);transition:.3s}
+.soc:hover .scta{opacity:1;transform:translateX(0)}
+.sgw{position:absolute;right:-25px;top:-25px;width:90px;height:90px;border-radius:50%;background:radial-gradient(circle,var(--glow) 0%,transparent 70%);opacity:0;transition:.3s}
+.soc:hover .sgw{opacity:1}
+.cwrap{display:grid;grid-template-columns:1.4fr 1fr;gap:32px;align-items:start}
+.cform{padding:36px}
+.fg{margin-bottom:20px}
+.fg label{display:block;font-family:'Orbitron',monospace;font-size:.67rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:7px}
+.fg input,.fg textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:var(--r);padding:12px 15px;color:#fff;font-family:'Rajdhani',sans-serif;font-size:.98rem;transition:.3s;outline:none;resize:vertical}
+.fg input::placeholder,.fg textarea::placeholder{color:var(--dim);opacity:.55}
+.fg input:focus,.fg textarea:focus{border-color:var(--red2);box-shadow:0 0 14px rgba(224,0,27,.15)}
+.fsuc{display:none;align-items:center;gap:9px;color:#4caf50;font-size:.88rem;margin-top:14px;padding:11px 15px;background:rgba(76,175,80,.08);border:1px solid rgba(76,175,80,.28);border-radius:var(--r)}
+.fsuc.vis{display:flex}
+.cinfo{display:flex;flex-direction:column;gap:14px}
+.ci{display:flex;align-items:center;gap:16px;padding:18px 20px}
+.ci i{font-size:1.2rem;color:var(--red2);text-shadow:0 0 10px var(--glow);width:24px;text-align:center}
+.ci>div{display:flex;flex-direction:column;gap:2px}
+.ci span{font-size:.65rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);font-family:'Orbitron',monospace}
+.ci a{color:#fff;font-size:.92rem;font-weight:500;transition:.3s}
+.ci a:hover{color:var(--red2)}
+footer{position:relative;z-index:10;background:#030305;border-top:1px solid var(--bhi);padding:56px 5vw 32px;text-align:center;overflow:hidden}
+.fsm{position:absolute;inset:0;background:radial-gradient(ellipse 80% 40% at 50% 100%,rgba(224,0,27,.06) 0%,transparent 70%);pointer-events:none}
+.fin{position:relative;z-index:2}
+.flogo{font-family:'Orbitron',monospace;font-size:clamp(2.2rem,7vw,4.5rem);font-weight:900;letter-spacing:.06em;margin-bottom:12px}
+.ftag{color:var(--dim);font-size:.87rem;letter-spacing:.1em;margin-bottom:28px}
+.fsoc{display:flex;justify-content:center;gap:14px;margin-bottom:32px}
+.fsoc a{width:44px;height:44px;border:1px solid var(--border);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;color:var(--dim);transition:.3s}
+.fsoc a:hover{border-color:var(--red2);color:var(--red2);box-shadow:0 0 18px var(--glow);transform:translateY(-3px)}
+.fdiv{width:100%;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin-bottom:20px}
+.fcopy{color:var(--dim);font-size:.76rem;letter-spacing:.08em}
+@keyframes fiDown{from{opacity:0;transform:translateY(-18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fiUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:#5a0009;border-radius:5px}
+::-webkit-scrollbar-thumb:hover{background:var(--red)}
+.rev{opacity:0;transform:translateY(36px);transition:opacity .65s ease,transform .65s ease}
+.rev.vis{opacity:1;transform:translateY(0)}
+@media(max-width:860px){
+.nlinks{display:none;position:fixed;inset:0 0 0 30%;background:rgba(6,6,8,.97);flex-direction:column;justify-content:center;align-items:center;gap:26px;border-left:1px solid var(--bhi);z-index:800}
+.nlinks.open{display:flex}
+.nbtn{display:flex;z-index:810}
+.abg{grid-template-columns:1fr}
+.amain{order:-1}
+.shg{grid-template-columns:1fr;max-width:360px;margin:0 auto}
+.glg{grid-template-columns:1fr 1fr;grid-template-rows:160px 160px 160px}
+.sog{grid-template-columns:1fr}
+.cwrap{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+.sec{padding:60px 5vw}
+.hbtns{flex-direction:column;align-items:center}
+.hbtns .btn{width:100%;max-width:300px;justify-content:center}
+.glg{grid-template-columns:1fr;grid-template-rows:unset}
+.gli{height:170px}.glw{grid-column:span 1}
+.cform{padding:22px}
+}
+</style>
+</head>
+<body>
+
+<div class="wm" id="wm">DS GAMER</div>
+<div class="mglow" id="mg"></div>
+<canvas id="bgCanvas"></canvas>
+
+<nav id="nav">
+  <div class="nlogo">DS<span>GAMER</span></div>
+  <button class="nbtn" id="ntog" aria-label="Menu"><span></span><span></span><span></span></button>
+  <ul class="nlinks" id="nlinks">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#shorts">Shorts</a></li>
+    <li><a href="#social">Social</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section id="hero" class="hero">
+  <div class="smoke s1"></div>
+  <div class="smoke s2"></div>
+  <div class="smoke s3"></div>
+  <div>
+    <div class="hbadge">⚡ LIVE CONTENT CREATOR</div>
+    <h1 class="hlogo" id="hlogo"><span class="lds">DS</span><span class="lgm">GAMER</span></h1>
+    <div class="htyped"><span id="ttext"></span><span class="cur">|</span></div>
+    <p class="hsub">Free Fire Gameplay &nbsp;•&nbsp; Gaming Shorts &nbsp;•&nbsp; Content Creator</p>
+    <div class="hbtns">
+      <a href="https://www.youtube.com/@officialdsgamer" target="_blank" class="btn bp"><i class="fab fa-youtube"></i> Subscribe on YouTube</a>
+      <a href="https://www.instagram.com/deepanshusilan_210/" target="_blank" class="btn bs"><i class="fab fa-instagram"></i> Follow on Instagram</a>
+    </div>
+    <div class="hstats">
+      <div class="stat"><span class="stn">100+</span><span class="stl">Videos</span></div>
+      <div class="sdiv"></div>
+      <div class="stat"><span class="stn">FF</span><span class="stl">Player</span></div>
+      <div class="sdiv"></div>
+      <div class="stat"><span class="stn">24/7</span><span class="stl">Gaming</span></div>
+    </div>
+  </div>
+  <div class="scroll-ind"><span>SCROLL</span><div class="sline"></div></div>
+</section>
+
+<section id="about" class="sec" style="background:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 100%)">
+  <div class="secl rev">// ABOUT</div>
+  <h2 class="sect rev">Who is <span class="acc">DS GAMER?</span></h2>
+  <div class="abg">
+    <div class="ac gc rev">
+      <div class="aic"><i class="fas fa-crosshairs"></i></div>
+      <h3>Free Fire Pro</h3>
+      <p>Pushing limits with aggressive gameplay, clutch moments, and tournament-level skills every match.</p>
+    </div>
+    <div class="ac gc amain rev" style="transition-delay:.12s">
+      <div class="avt"><div class="aring"></div><div class="ainr">DS</div></div>
+      <h3>DEEPANSHU SILAN</h3>
+      <p class="ahd">@officialdsgamer</p>
+      <p>Passionate gaming content creator from India crafting high-energy shorts and full gameplay videos.</p>
+      <br/>
+      <a href="https://www.youtube.com/@officialdsgamer" target="_blank" class="btn bo">View Channel</a>
+    </div>
+    <div class="ac gc rev" style="transition-delay:.24s">
+      <div class="aic"><i class="fas fa-film"></i></div>
+      <h3>Content Creator</h3>
+      <p>Cinematic gaming shorts designed for maximum impact on YouTube and Instagram Reels.</p>
+    </div>
+  </div>
+</section>
+
+<section id="shorts" class="sec" style="background:var(--bg)">
+  <div class="secl rev">// FEATURED SHORTS</div>
+  <h2 class="sect rev">Latest <span class="acc">Shorts</span></h2>
+  <p class="secsb rev">Binge-worthy gaming clips — click to watch!</p>
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:480px">
+    <a href="https://www.youtube.com/shorts/UvvV-actmhQ" class="gc rev" style="display:flex;align-items:center;gap:14px;padding:14px 18px;text-decoration:none;transition:.3s">
+      <span style="width:36px;height:36px;background:rgba(255,0,0,.15);border:1px solid rgba(255,0,0,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ff4444;font-size:1rem;flex-shrink:0"><i class="fab fa-youtube"></i></span>
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.06em">Epic Free Fire Moment</div>
+        <div style="font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:2px">YOUTUBE SHORT →</div>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/shorts/SV4scWjCMG8" class="gc rev" style="display:flex;align-items:center;gap:14px;padding:14px 18px;text-decoration:none;transition:.3s;transition-delay:.1s">
+      <span style="width:36px;height:36px;background:rgba(255,0,0,.15);border:1px solid rgba(255,0,0,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ff4444;font-size:1rem;flex-shrink:0"><i class="fab fa-youtube"></i></span>
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.06em">Clutch Play Highlight</div>
+        <div style="font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:2px">YOUTUBE SHORT →</div>
+      </div>
+    </a>
+    <a href="https://www.youtube.com/shorts/cIR91eZrjHI" class="gc rev" style="display:flex;align-items:center;gap:14px;padding:14px 18px;text-decoration:none;transition:.3s;transition-delay:.2s">
+      <span style="width:36px;height:36px;background:rgba(255,0,0,.15);border:1px solid rgba(255,0,0,.3);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#ff4444;font-size:1rem;flex-shrink:0"><i class="fab fa-youtube"></i></span>
+      <div>
+        <div style="font-family:'Orbitron',monospace;font-size:.75rem;font-weight:700;color:#fff;letter-spacing:.06em">Ranked Match Madness</div>
+        <div style="font-size:.7rem;color:var(--dim);letter-spacing:.1em;margin-top:2px">YOUTUBE SHORT →</div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<section id="social" class="sec" style="background:var(--bg)">
+  <div class="secl rev">// CONNECT</div>
+  <h2 class="sect rev">Follow the <span class="acc">Journey</span></h2>
+  <p class="secsb rev">Stay plugged in across every platform.</p>
+  <div class="sog">
+    <a href="https://www.youtube.com/@officialdsgamer" target="_blank" class="soc gc yt rev"><div class="siw"><i class="fab fa-youtube"></i></div><div class="sinf"><span class="spl">YouTube</span><span class="shn">@officialdsgamer</span><span class="scta">Subscribe Now →</span></div><div class="sgw"></div></a>
+    <a href="https://www.instagram.com/deepanshusilan_210/" target="_blank" class="soc gc ig rev" style="transition-delay:.1s"><div class="siw"><i class="fab fa-instagram"></i></div><div class="sinf"><span class="spl">Instagram</span><span class="shn">@deepanshusilan_210</span><span class="scta">Follow Now →</span></div><div class="sgw"></div></a>
+    <a href="https://in.pinterest.com/silandeepanshu/_profile/" target="_blank" class="soc gc pt rev" style="transition-delay:.2s"><div class="siw"><i class="fab fa-pinterest"></i></div><div class="sinf"><span class="spl">Pinterest</span><span class="shn">silandeepanshu</span><span class="scta">Explore Boards →</span></div><div class="sgw"></div></a>
+    <a href="mailto:silandeepanshu@gmail.com" class="soc gc em rev" style="transition-delay:.3s"><div class="siw"><i class="fas fa-envelope"></i></div><div class="sinf"><span class="spl">Email</span><span class="shn">silandeepanshu@gmail.com</span><span class="scta">Send Mail →</span></div><div class="sgw"></div></a>
+  </div>
+</section>
+
+<section id="contact" class="sec" style="background:var(--bg2)">
+  <div class="secl rev">// CONTACT</div>
+  <h2 class="sect rev">Get in <span class="acc">Touch</span></h2>
+  <p class="secsb rev">Collabs, sponsorships, ya bas hi kuch kehna ho — message karo.</p>
+  <div class="cwrap">
+    <form class="cform gc rev" id="cfrm" novalidate>
+      <div class="fg"><label>Your Name</label><input type="text" id="cn" placeholder="Your name" required/></div>
+      <div class="fg"><label>Email Address</label><input type="email" id="ce" placeholder="you@example.com" required/></div>
+      <div class="fg"><label>Subject</label><input type="text" id="cs" placeholder="Collab / Sponsorship / Fan Mail"/></div>
+      <div class="fg"><label>Message</label><textarea id="cm" rows="5" placeholder="Apna message yahan likhein..." required></textarea></div>
+      <button type="submit" class="btn bp" style="width:100%;justify-content:center"><i class="fas fa-paper-plane"></i> Send Message</button>
+      <div class="fsuc" id="fsuc"><i class="fas fa-check-circle"></i> Message send ho gaya! Jaldi reply karunga.</div>
+    </form>
+    <div class="cinfo rev" style="transition-delay:.15s">
+      <div class="ci gc"><i class="fas fa-envelope"></i><div><span>Email</span><a href="mailto:silandeepanshu@gmail.com">silandeepanshu@gmail.com</a></div></div>
+      <div class="ci gc"><i class="fab fa-youtube"></i><div><span>YouTube</span><a href="https://www.youtube.com/@officialdsgamer" target="_blank">@officialdsgamer</a></div></div>
+      <div class="ci gc"><i class="fab fa-instagram"></i><div><span>Instagram</span><a href="https://www.instagram.com/deepanshusilan_210/" target="_blank">@deepanshusilan_210</a></div></div>
+      <div class="ci gc"><i class="fab fa-pinterest"></i><div><span>Pinterest</span><a href="https://in.pinterest.com/silandeepanshu/_profile/" target="_blank">silandeepanshu</a></div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="fsm"></div>
+  <div class="fin">
+    <div class="flogo"><span class="lds">DS</span><span class="lgm">GAMER</span></div>
+    <p class="ftag">Free Fire Gameplay • Gaming Shorts • Content Creator</p>
+    <div class="fsoc">
+      <a href="https://www.youtube.com/@officialdsgamer" target="_blank" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+      <a href="https://www.instagram.com/deepanshusilan_210/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="https://in.pinterest.com/silandeepanshu/_profile/" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+      <a href="mailto:silandeepanshu@gmail.com" aria-label="Email"><i class="fas fa-envelope"></i></a>
+    </div>
+    <div class="fdiv"></div>
+    <p class="fcopy">© 2025 DS GAMER. All Rights Reserved. Made with ❤️ for gamers.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const canvas=document.getElementById('bgCanvas');
+const renderer=new THREE.WebGLRenderer({canvas,alpha:true,antialias:false});
+renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+renderer.setSize(innerWidth,innerHeight);
+renderer.setClearColor(0,0);
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.1,1000);
+camera.position.z=80;
+const sCount=1600,sPos=new Float32Array(sCount*3);
+for(let i=0;i<sCount;i++){sPos[i*3]=(Math.random()-.5)*500;sPos[i*3+1]=(Math.random()-.5)*500;sPos[i*3+2]=(Math.random()-.5)*500;}
+const sGeo=new THREE.BufferGeometry();sGeo.setAttribute('position',new THREE.BufferAttribute(sPos,3));
+scene.add(new THREE.Points(sGeo,new THREE.PointsMaterial({color:0xffffff,size:.55,sizeAttenuation:true,transparent:true,opacity:.3})));
+const pCount=260,pPos=new Float32Array(pCount*3),pVel=[];
+for(let i=0;i<pCount;i++){pPos[i*3]=(Math.random()-.5)*200;pPos[i*3+1]=(Math.random()-.5)*110;pPos[i*3+2]=(Math.random()-.5)*80;pVel.push({x:(Math.random()-.5)*.04,y:Math.random()*.05+.01,z:(Math.random()-.5)*.02});}
+const pGeo=new THREE.BufferGeometry();pGeo.setAttribute('position',new THREE.BufferAttribute(pPos,3));
+const pMat=new THREE.PointsMaterial({color:0xe0001b,size:1.1,sizeAttenuation:true,transparent:true,opacity:.7});
+scene.add(new THREE.Points(pGeo,pMat));
+const grid=new THREE.GridHelper(400,60,0x200005,0x120002);
+grid.rotation.x=Math.PI*.04;grid.position.y=-50;grid.material.opacity=.25;grid.material.transparent=true;
+scene.add(grid);
+let mx=0,my=0;
+document.addEventListener('mousemove',e=>{mx=(e.clientX/innerWidth-.5)*.3;my=(e.clientY/innerHeight-.5)*.3;});
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight);});
+let t=0;
+(function loop(){requestAnimationFrame(loop);t+=.016;
+const pa=pGeo.attributes.position.array;
+for(let i=0;i<pCount;i++){pa[i*3]+=pVel[i].x;pa[i*3+1]+=pVel[i].y;pa[i*3+2]+=pVel[i].z;if(pa[i*3+1]>62)pa[i*3+1]=-62;}
+pGeo.attributes.position.needsUpdate=true;
+pMat.opacity=.6+Math.sin(t*1.2)*.12;
+camera.position.x+=(mx*8-camera.position.x)*.03;
+camera.position.y+=(-my*5-camera.position.y)*.03;
+camera.lookAt(0,0,0);
+scene.rotation.y=t*.007;
+renderer.render(scene,camera);
+})();
+})();
+
+const mg=document.getElementById('mg');
+document.addEventListener('mousemove',e=>{mg.style.left=e.clientX+'px';mg.style.top=e.clientY+'px';});
+
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>nav.classList.toggle('sc',scrollY>50));
+
+const ntog=document.getElementById('ntog');
+const nlinks=document.getElementById('nlinks');
+ntog.addEventListener('click',()=>nlinks.classList.toggle('open'));
+nlinks.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>nlinks.classList.remove('open')));
+
+const phrases=['WELCOME TO DS GAMER','FREE FIRE GAMEPLAY','GAMING SHORTS CREATOR','BOOYAH EVERY MATCH!'];
+let pi=0,ci=0,del=false;
+const tel=document.getElementById('ttext');
+function type(){
+  const cur=phrases[pi];
+  if(!del){tel.textContent=cur.slice(0,++ci);if(ci===cur.length){del=true;setTimeout(type,1900);return;}
+  }else{tel.textContent=cur.slice(0,--ci);if(ci===0){del=false;pi=(pi+1)%phrases.length;}}
+  setTimeout(type,del?50:80);
+}
+setTimeout(type,800);
+
+const logo=document.getElementById('hlogo');
+if(logo){document.addEventListener('mousemove',e=>{if(innerWidth<860)return;const dx=(e.clientX-innerWidth/2)/(innerWidth/2),dy=(e.clientY-innerHeight/2)/(innerHeight/2);logo.style.transform=`perspective(600px) rotateY(${dx*6}deg) rotateX(${-dy*4}deg)`;});document.addEventListener('mouseleave',()=>{logo.style.transform='perspective(600px) rotateY(0) rotateX(0)';});}
+
+const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis');});},{threshold:.12});
+document.querySelectorAll('.rev').forEach(el=>io.observe(el));
+
+const frm=document.getElementById('cfrm');
+const fsuc=document.getElementById('fsuc');
+frm.addEventListener('submit',e=>{e.preventDefault();
+const n=document.getElementById('cn').value.trim();
+const em=document.getElementById('ce').value.trim();
+const msg=document.getElementById('cm').value.trim();
+if(!n||!em||!msg){frm.style.boxShadow='0 0 0 2px var(--red)';setTimeout(()=>frm.style.boxShadow='',600);return;}
+const btn=frm.querySelector('.btn');btn.textContent='Sending…';btn.disabled=true;
+setTimeout(()=>{fsuc.classList.add('vis');btn.innerHTML='<i class="fas fa-paper-plane"></i> Send Message';btn.disabled=false;frm.reset();setTimeout(()=>fsuc.classList.remove('vis'),5000);},1100);
+});
+</script>
+</body>
+</html>
